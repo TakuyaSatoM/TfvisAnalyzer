@@ -1,8 +1,24 @@
 package tfvis;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 
+/**
+ * @author Muco
+ *
+ */
+
+/**
+ * @author Muco
+ *
+ */
+/**
+ * @author Muco
+ *
+ */
 public class FileManager {
 	ArrayList<File> classFiles;
 
@@ -11,70 +27,85 @@ public class FileManager {
 	}
 
 	/**
-	 * フォルダ初期化(中身を全部消す)
-	 * 
+	 * フォルダの中身を全て削除する
+	 *
 	 * @param dirOrFile
 	 *            ファイルパス(フォルダパス)
 	 * @return none
 	 */
-	public void clearDir(File dirOrFile) {
-		if (dirOrFile.isDirectory()) {// ディレクトリの場合
-			String[] children = dirOrFile.list();// ディレクトリにあるすべてのファイルを処理する
-			for (int i = 0; i < children.length; i++) {
-				deleteFile(new File(dirOrFile, children[i]));
-			}
+	public void clearDir(File path) {
+		// ディレクトリ下の各ファイルを削除
+		for (File child : path.listFiles()) {
+			recursiveDeleteFile(child);
 		}
 	}
 
 	/**
-	 * ファイル総削除用(指定したフォルダも消える)
-	 * 
+	 * 再帰的なファイル削除
+	 *
 	 * @param path
 	 *            ファイルパスorフォルダパス
 	 * @return 成否
 	 */
-	public boolean deleteFile(File path) {
-		if (path.isDirectory()) {// ディレクトリの場合
-			String[] children = path.list();// ディレクトリにあるすべてのファイルを処理する
-			for (int i = 0; i < children.length; i++) {
-				boolean success = deleteFile(new File(path, children[i]));
-				if (!success) {
-					return false;
-				}
+	public void recursiveDeleteFile(File path) {
+		// 対象パスがディレクトリかどうか判定
+		if (path.isDirectory()) {
+			// ディレクトリ下の各ファイルについて再帰的に削除
+			for (File child : path.listFiles()) {
+				recursiveDeleteFile(child);
 			}
 		}
-		// 削除
-		return path.delete();
+		// ファイル(空フォルダ)の削除
+		path.delete();
 	}
 
 	/**
 	 * 可視化対象クラスファイルの取得
-	 * 
+	 *
 	 * @param targetPath
 	 *            可視化対象フォルダのパス
-	 * 
+	 *
 	 * @return クラスファイル群
 	 */
-	public ArrayList<File> getClassFile(File targetPath) {
-		classFileWalk(targetPath);
+	public ArrayList<File> getClassFile(File path) {
+		recursiveFileWalk(path);
 		return classFiles;
 	}
 
 	/**
-	 * 再帰用のクラスファイル探索
-	 * 
+	 * 再帰的なクラスファイル探索
+	 *
 	 * @param path
 	 *            ファイルパスorフォルダパス
-	 * 
+	 *
 	 * @return none
 	 */
-	private void classFileWalk(File path) {
+	private void recursiveFileWalk(File path) {
+		// 対象パスがディレクトリかどうか判定
 		if (path.isDirectory()) {
+			// ディレクトリ下の各ファイルについて再帰的に削除
 			for (File child : path.listFiles()) {
-				classFileWalk(child);
+				recursiveFileWalk(child);
 			}
-		} else {
+		} else if (path.getName().endsWith("class")) {
+			// クラスファイルの取得
 			classFiles.add(path);
 		}
+	}
+
+	/**
+	 * ファイルのコピー
+	 *
+	 * @param inputPath
+	 *            コピー元ファイルパス
+	 * @param outputPath
+	 *            コピー先ファイルパス
+	 */
+	public void transferTo(Path sourcePath, Path targetPath) {
+		if(Files.isDirectory(sourcePath)){
+			for(Files child : Files.list(sourcePath);
+		}
+			Files.copy(sourcePath, targetPath);
+
 	}
 }

@@ -3,6 +3,8 @@ package tfvis;
 import java.io.File;
 import java.util.ArrayList;
 
+import staticAnalyzer.ClassAnalyzer;
+
 public class Tfvis implements TfvisConstants {
 
 	public static void main(String[] args) {
@@ -13,6 +15,10 @@ public class Tfvis implements TfvisConstants {
 
 		// クラスファイルの取得
 		ArrayList<File> classFiles = fileManager.getClassFile(new File("target/bin"));
+
+
+		// 対象クラスファイルの解析
+		ClassAnalyzer analyzer = new ClassAnalyzer(classFiles);
 
 	}
 }

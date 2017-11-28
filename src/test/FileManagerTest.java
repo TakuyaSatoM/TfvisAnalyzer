@@ -4,20 +4,28 @@ import static org.assertj.core.api.Assertions.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import tfvis.FileManager;
 
 public class FileManagerTest {
+	FileManager fileManager;
+
+	@Before
+	public void ファイルマネージャの作成() {
+		fileManager = new FileManager();
+	}
 
 	@Test
 	public void outputフォルダのファイルを削除する() throws IOException {
 		// Arrange
 		int expected = 0;
 		File targetFolder = new File("output");
-		FileManager fileManager = new FileManager();
 		ArrayList<File> classFiles = new ArrayList<File>();
 
 		// Act
@@ -35,12 +43,12 @@ public class FileManagerTest {
 		// Arrange
 		String expected = "Main.class";
 		File targetFolder = new File("target/bin");
-		FileManager fileManager = new FileManager();
 		fileManager.clearDir(targetFolder);
+		File testFile = new File("target/bin/Main.class");
 		try {
-			targetFolder.createTempFile("Main", "class");
+			testFile.createNewFile();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			// TODO 自動生成された catch ブロック
 			e.printStackTrace();
 		}
 		ArrayList<File> classFiles = new ArrayList<File>();
@@ -50,7 +58,30 @@ public class FileManagerTest {
 
 		// Assert
 		for (File file : classFiles) {
-			assertThat(file.getName()).isEqualTo(expected);
+			String actual = file.getName();
+			assertThat(actual).isEqualTo(expected);
+		}
+	}
+
+	@Test
+	public void ファイルを移動する() {
+		// Arrange
+		boolean expected = true;
+		Path sourcePath = Paths.get("../Master/bin");
+		Path targetPath = Paths.get("target/bin");
+		fileManager.clearDir(targetPath.toFile());
+		ArrayList<File> sourceFiles = new ArrayList<File>();
+		sourceFiles = fileManager.getClassFile(sourcePath.toFile());
+		ArrayList<File> targetFiles = new ArrayList<File>();
+
+		// Act
+		fileManager.transferTo(sourcePath, targetPath);
+		targetFiles = fileManager.getClassFile(targetPath.toFile());
+
+		// Assert
+		for(File file:sourceFiles){
+			boolean actual = targetFiles.contains(sourceFiles);
+			assertThat(actual).isEqualTo(expected);
 		}
 	}
 
