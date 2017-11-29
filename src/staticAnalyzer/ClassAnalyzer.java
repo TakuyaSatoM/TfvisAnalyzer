@@ -13,5 +13,7 @@ public class ClassAnalyzer {
 	}
 
 	// 以下、テスト用アクセサ
-
+	public ArrayList<JavaClass> getClassData() {
+		return analysisData;
+	}
 }
