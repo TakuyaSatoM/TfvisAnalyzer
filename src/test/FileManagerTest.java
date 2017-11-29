@@ -64,7 +64,7 @@ public class FileManagerTest {
 	}
 
 	@Test
-	public void ファイルを移動する() {
+	public void ファイルをコピーする() {
 		// Arrange
 		boolean expected = true;
 		Path sourcePath = Paths.get("../Master/bin");
@@ -79,8 +79,8 @@ public class FileManagerTest {
 		targetFiles = fileManager.getClassFile(targetPath.toFile());
 
 		// Assert
-		for(File file:sourceFiles){
-			boolean actual = targetFiles.contains(sourceFiles);
+		for (File file : sourceFiles) {
+			boolean actual = targetFiles.contains(file);
 			assertThat(actual).isEqualTo(expected);
 		}
 	}

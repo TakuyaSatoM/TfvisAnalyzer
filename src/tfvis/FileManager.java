@@ -1,24 +1,12 @@
 package tfvis;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
-/**
- * @author Muco
- *
- */
-
-/**
- * @author Muco
- *
- */
-/**
- * @author Muco
- *
- */
 public class FileManager {
 	ArrayList<File> classFiles;
 
@@ -94,18 +82,49 @@ public class FileManager {
 	}
 
 	/**
-	 * ファイルのコピー
+	 * 対象フォルダの中身のコピー
+	 * 
+	 * @param sourcePath
+	 *            コピー元ファイルパス
+	 * @param targetPath
+	 *            コピー先ファイルパス
+	 */
+	public void transferTo(Path sourcePath, Path targetPath) {
+		try {
+			recursiveTransferTo(sourcePath, targetPath);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * 再帰的なファイルのコピー
 	 *
 	 * @param inputPath
 	 *            コピー元ファイルパス
 	 * @param outputPath
 	 *            コピー先ファイルパス
+	 * @throws IOException
 	 */
-	public void transferTo(Path sourcePath, Path targetPath) {
-		if(Files.isDirectory(sourcePath)){
-			for(Files child : Files.list(sourcePath);
-		}
-			Files.copy(sourcePath, targetPath);
+	public void recursiveTransferTo(Path sourcePath, Path targetPath) throws IOException {
+		// 対象パスがフォルダかどうか判定
+		if (Files.isDirectory(sourcePath)) {
+			// フォルダのコピー
+			if (!Files.exists(targetPath)) {
+				Files.copy(sourcePath, targetPath);
+			}
 
+			// 再帰的にフォルダの中身をコピー
+			for (Path child : Files.list(sourcePath).collect(Collectors.toList())) {
+				// ターゲットパスの指定
+				Path newTargetPath = targetPath.resolve(child.toFile().getName());
+				recursiveTransferTo(child, newTargetPath);
+			}
+
+		} else {
+			// ファイルのコピー
+			Files.copy(sourcePath, targetPath);
+		}
 	}
 }
