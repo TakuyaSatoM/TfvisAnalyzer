@@ -23,7 +23,7 @@ public class ClassAnalyzerTest {
 		fileManager = new FileManager();
 		targetFile = new File("target/bin");
 		fileManager.clearDir(targetFile);
-		fileManager.transferTo(Paths.get("../Master/bin"), targetFile.toPath());
+		fileManager.transferTo(Paths.get("sample/Ary/bin"), targetFile.toPath());
 	}
 
 	@Test
